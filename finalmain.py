@@ -12,13 +12,13 @@ class Controller:
 		self.display = pygame.display.set_caption("Title: ") #Game title
 		self.background = pygame.Surface(self.screen.get_size()).convert()
 		
-		
-		self.character1 = character.Character('name', 'cat', 100,720,'Siamese-Cat.png', 'Siamese-Cat.png')
-		self.character2 = character.Character('name', 'cat', 1820,720,'Siamese-Cat.png', 'Siamese-Cat.png')
+		fuckingImage = character.load_image("Siamese-Cat.png", -1)
+		self.character1 = character.Character('name', 'cat', 100,720, fuckingImage, fuckingImage)
+		self.character2 = character.Character('name', 'cat', 1820,720, fuckingImage, fuckingImage)
 
 		self.operation = []
-		for i in range():
-			operation[i] = pygame.image.load("Siamese-Cat.png")
+		for i in range(len(self.operation)):
+			self.operation[i] = pygame.image.load("Siamese-Cat.png")
 		
 
 		self.sprites1 = pygame.sprite.RenderPlain(self.character1)

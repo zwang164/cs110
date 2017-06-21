@@ -1,17 +1,18 @@
 import pygame
+import os
 import sys
 
 def load_image(pname,ptype):
 	fullname = os.path.join('assets',pname)
 	try:
 		image = pygame.image.load(fullname)
+	
 	except pygame.error as message:
 		print('cannot load image: ', pname)
 
 	image = image.convert()
-		
-	return image,image.get_rect()
 
+	return image,image.get_rect()
 
 
 class Character:
@@ -21,7 +22,7 @@ class Character:
 		self.name = pname # Character Name
 		self.type = ptype # Character Type
 
-		self.image, self.rect = load_image(img_file, -1) 
+		self.image, self.rect = load_image("Siamese-Cat.png", -1)
 		
 
 		self.rect.x = px	#position move back when punched/kicked
@@ -31,7 +32,7 @@ class Character:
 		self.defaultImage = defaultImage	
 		self.actionImages = actionImages
 		self.playerHealth = 100
-		self.playerHealthColor = green
+		self.playerHealthColor = 'green'
 
 
 
@@ -49,9 +50,9 @@ class Character:
 	def healthBar(self):
 		
 		if self.playerHealth <= 75 and self.playerHealth >= 30:
-			self.playerHealthColor = yellow
+			self.playerHealthColor = 'yellow'
 		elif self.playerHealth < 30: 
-			self.playerHealthColor = red
+			self.playerHealthColor = 'red'
 	
 	def fight(self):
 		if(direction == K_j or direction == K_KP4):
