@@ -54,12 +54,6 @@ class Characters:
 			self.playerHealthColor = yellow
 		elif self.playerHealth < 30: 
 			self.playerHealthColor = red
-		
-	
-
-		pygame.draw.rect(gameDisplay, player1HealthColor, (680, 25, playerHealth, 25)) #health bar's rectangle
-		pygame.draw.rect(gameDisplay, player2HealthColor, (20, 25, player2Health, 25)) #(screen, color, (x, y, width, height))
-
 	
 	def fight(self):
 		if(direction == K_j or direction == K_KP4):
