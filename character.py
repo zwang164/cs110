@@ -17,8 +17,6 @@ def load_image(pname,ptype):
 class Characters:
 	def __init__(self, pname, ptype, px,py, defaultImage,actionImages):
 		pygame.sprite.Sprite.__init__(self):
-		self.screen = pygame.display.setMode(1920,1080) #Game Resolution
-		self.display = pygame.display.setCaption("Title: ") #Game title
 		self.FPS = 24 #Frames per second
 		self.name = pname # Character Name
 		self.type = ptype # Character Type
@@ -54,12 +52,6 @@ class Characters:
 			self.playerHealthColor = yellow
 		elif self.playerHealth < 30: 
 			self.playerHealthColor = red
-		
-	
-
-		pygame.draw.rect(gameDisplay, player1HealthColor, (680, 25, playerHealth, 25)) #health bar's rectangle
-		pygame.draw.rect(gameDisplay, player2HealthColor, (20, 25, player2Health, 25)) #(screen, color, (x, y, width, height))
-
 	
 	def fight(self):
 		if(direction == K_j or direction == K_KP4):
