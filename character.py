@@ -14,14 +14,14 @@ def load_image(pname,ptype):
 
 
 
-class Characters:
+class Character:
 	def __init__(self, pname, ptype, px,py, defaultImage,actionImages):
-		pygame.sprite.Sprite.__init__(self):
+		pygame.sprite.Sprite.__init__(self)
 		self.FPS = 24 #Frames per second
 		self.name = pname # Character Name
 		self.type = ptype # Character Type
 
-		self.image, self.rect = load_image(img_file,"chicken") 
+		self.image, self.rect = load_image(img_file, -1) 
 		
 
 		self.rect.x = px	#position move back when punched/kicked
@@ -55,17 +55,17 @@ class Characters:
 	
 	def fight(self):
 		if(direction == K_j or direction == K_KP4):
-		self.currentImage = self.actionImage["punch"] #image for punch
-		self.vx = 0 #initial velocity for punch
+			self.currentImage = self.actionImage["punch"] #image for punch
+			self.vx = 0 #initial velocity for punch
 		#self.vy = 0
 
 		elif(direction == K_k or direction == K_KP5):
-		self.currentImage = self.actionImage["kick"] #image for kick
-		self.vx = 0 #initial velocity for kick
+			self.currentImage = self.actionImage["kick"] #image for kick
+			self.vx = 0 #initial velocity for kick
 		#self.vy = 0
 		
 		elif(direction == K_l or direction == K_KP6):
-		self.currentImage = self.actionImage["block"] #image for block
+			self.currentImage = self.actionImage["block"] #image for block
 
 
 
