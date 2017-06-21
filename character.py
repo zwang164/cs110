@@ -14,7 +14,7 @@ def load_image(pname,ptype):
 
 
 
-class Characters:
+class Character:
 	def __init__(self, pname, ptype, px,py, defaultImage,actionImages):
 		pygame.sprite.Sprite.__init__(self):
 		self.FPS = 24 #Frames per second
@@ -22,7 +22,7 @@ class Characters:
 		self.type = ptype # Character Type
 
 		self.image, self.rect = load_image(img_file,"chicken") 
-		
+					self.rect = self.imgage.get_rect
 
 		self.rect.x = px	#position move back when punched/kicked
 		self.rect.y = py
