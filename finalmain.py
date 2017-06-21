@@ -2,28 +2,60 @@ import character
 import pygame
 import sys
 
+def spriteSheet('sheet.png'):	
+
+		sheet1 = pygame.image.load('sheet1.png') #load the sheet 
+		sheet2 = pygame.image.load('sheet2.png')
+		
+		#set_clip and subsurface are the method from pygame.Surface
+
+		charImg1 = []
+		for row in range(5):
+			for i in range(10):
+				#locate each image
+				#where sprite is found on the sheet
+				sheet1_rect_x=0
+				sheet1_rect_y=0
+				#dimension of each image on the sheet
+				sheet1_len_rect_x=100
+				sheet1_len_rect_y=100
+				#locate your sprite
+				sheet1.set_clip(pygame.Rec(sheet1_rect_x,sheet1_rect_y,sheet1_len_rect_x,sheet1_len_rect_y)) 
+				charImg1[i] = sheet1.subsurface(sheet1.get_clip())   #extract sprite 
+				sheet1_rect_x += 100
+			sheet1_rect_y += 100
+
+		charImg2 = []
+		for row in range(5):
+			for i in range(10):
+				sheet2_rect_x=0
+				sheet2_rect_y=0
+				sheet2_len_rect_x=100
+				sheet2_len_rect_y=100
+				sheet2.set_clip(pygame.Rec(sheet2_rect_x,sheet2_rect_y,sheet2_len_rect_x,sheet2_len_rect_y)) 
+				charImg2[i] = sheet1.subsurface(sheet1.get_clip()) 
+				sheet1_rect_x += 100
+
+			sheet1_rect_y += 100
+	
 
 class Controller:
 	def __init__(self):
         	pygame.init()
         	
-		self.screen = pygame.display.setMode(1920,1080) #Game Resolution
+		self.screen = pygame.display.set_mode((1920,1080)) #Game Resolution
 
-		self.display = pygame.display.setCaption("Title: ") #Game title
+		self.display = pygame.display.set_caption("Title: ") #Game title
 		self.background = pygame.Surface(self.screen.get_size()).convert()
-		
+	#----------------------------------------------	
 		
 		self.character1 = character.Character('name',100,720,'img.png')
 		self.character2 = character.Character('name',1820,720,'img.png')
 
-		self.operation = []
-		for i in range():
-			operation[i] = pygame.image.load(".png")
+		self.sprites1 = pygame.sprite.RenderPlain(self.charImg1)
+		self.sprites2 = pygame.sprite.RenderPlain(self.charImg2)
 		
-
-		self.sprites1 = pygame.sprite.RenderPlain(self.character1)
-		self.sprites2 = pygame.sprite.RenderPlain(self.character2)
-
+#-----------------------------------------
 	def gameIntro(): # Intro Screen
 		intro = True
 		while intro:
