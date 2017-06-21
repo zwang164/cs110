@@ -58,6 +58,11 @@ class Controller:
 		
 		self.screen.blit(self.background, (0, 0))
             	self.sprites.draw(self.screen)
+		
+
+		pygame.draw.rect(gameDisplay, player1HealthColor, (680, 25, playerHealth, 25)) #health bar's rectangle
+		pygame.draw.rect(gameDisplay, player2HealthColor, (20, 25, player2Health, 25)) #(screen, color, (x, y, width, height))
+
 		pygame.display.update()
 
 def main():
