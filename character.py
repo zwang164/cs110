@@ -17,8 +17,6 @@ def load_image(pname,ptype):
 class Characters:
 	def __init__(self, pname, ptype, px,py, defaultImage,actionImages):
 		pygame.sprite.Sprite.__init__(self):
-		self.screen = pygame.display.setMode(1920,1080) #Game Resolution
-		self.display = pygame.display.setCaption("Title: ") #Game title
 		self.FPS = 24 #Frames per second
 		self.name = pname # Character Name
 		self.type = ptype # Character Type
