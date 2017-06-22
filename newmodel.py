@@ -26,6 +26,9 @@ class Character(pygame.sprite.Sprite):
 		self.speed = 50
 		self.rect.x = x
 		self.rect.y = y
+		
+		self.jump = False
+		self.collide = False
 
 	def healthBar(self):
 		if self.playerHealth <= 75 and self.playerHealth >= 30:
@@ -45,6 +48,24 @@ class Character(pygame.sprite.Sprite):
 		elif(direction == pygame.K_DOWN or direction == pygame.K_s):
 			self.rect.y += self.speed
 		print(self.rect.x, self.rect.y)
+
+	def jump(self):
+		self.jumpup = True 
+	
+	def collide(self):
+		self.colliding = True
+
+	def draw(self, screen):
+        	if self.jumpup:
+			self.v += self.g #Increments velocity
+			self.rect.y += self.v #Changes y position
+			if(self.rect.y > 415):
+				self.rect.y = 415
+				self.v = -20
+				self.jumpup = False
+			if self.colliding:
+				self.colliding = False
+			screen.blit(self.image, (self.rect.x, self.rect.y))
 
 	def fight(self, opponent):
 		if(random.randrange(3)):
