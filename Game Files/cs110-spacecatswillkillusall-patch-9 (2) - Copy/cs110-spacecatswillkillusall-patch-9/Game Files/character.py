@@ -87,6 +87,12 @@ class Character(pygame.sprite.Sprite):
 		self.jumpSpeed = 100
 		self.isJumping = False
 		self.invincibility = False
+		self.energyRate = 0
+
+	def ultimate(self):
+                if(self.energyRate == 100):
+                        #damage boost
+                        #of comb
 	
 	def healthBar(self):
 		if self.health <= 75 and self.health >= 30:
@@ -226,16 +232,20 @@ class Character(pygame.sprite.Sprite):
 	#Delete this dumbass shit l8
 	def fight1(self, eventKey, opponent):
 		if(eventKey == pygame.K_f):
+			if(self.energyRate <100):
+				self.energyRate += 10
 			#Run the punch animation even if you're nowhere close to other player
 			# as if you're some kind of twat who spams attacks
 			print("PUNCH OF DEATH!")
-			if(opponent.health > 0 and pygame.sprite.collide_rect(self, opponent) and (opponent.invincibility == False)):              
+			if(opponent.health > 0 and pygame.sprite.collide_rect(self, opponent) and (opponent.invincibility == False or self.facing == opponent.facing)):              
 				self.hit(opponent, 10, 20)
 		if(eventKey == pygame.K_g):
+			if(self.energyRate <100):
+				self.energyRate += 10
 			#Run the kick animation even without collision
 			# because you could be stupid and miss your kick
 			print("KICK OF DOOM!")
-			if (opponent.health > 0 and pygame.sprite.collide_rect(self, opponent) and (opponent.invincibility == False)):
+			if (opponent.health > 0 and pygame.sprite.collide_rect(self, opponent) and (opponent.invincibility == False or self.facing == opponent.facing)):
 				self.hit(opponent, 10, 20)
 		if(eventKey == pygame.K_h):
 			self.invincibility = True
@@ -245,16 +255,20 @@ class Character(pygame.sprite.Sprite):
 		
 	def fight2(self, eventKey, opponent):	
 		if(eventKey == pygame.K_KP4):
+			if(self.energyRate <100):
+				self.energyRate += 10
 			#Run the punch animation even if you're nowhere close to other player
 			# as if you're some kind of twat who spams attacks
 			print("PUNCH OF DEEEAAAATH!")
-			if(opponent.health > 0 and pygame.sprite.collide_rect(self, opponent) and (opponent.invincibility == False)):              
+			if(opponent.health > 0 and pygame.sprite.collide_rect(self, opponent) and (opponent.invincibility == False or self.facing == opponent.facing)):              
 				self.hit(opponent, 10, 20)
 		if(eventKey == pygame.K_KP5):
+			if(self.energyRate <100):
+				self.energyRate += 10
 			#Run the kick animation even without collision
 			# because you could be stupid and miss your kick
 			print("KICK OF DOOOOOOOOOM!")
-			if (opponent.health > 0 and pygame.sprite.collide_rect(self, opponent) and (opponent.invincibility == False)):
+			if (opponent.health > 0 and pygame.sprite.collide_rect(self, opponent) and (opponent.invincibility == False or self.facing == opponent.facing)):
 				self.hit(opponent, 10, 20)
 
 		opponent.healthBar()
@@ -262,5 +276,4 @@ class Character(pygame.sprite.Sprite):
 
 	def update(self):
 		print("updating position")
-		#self.invincibility = False
 

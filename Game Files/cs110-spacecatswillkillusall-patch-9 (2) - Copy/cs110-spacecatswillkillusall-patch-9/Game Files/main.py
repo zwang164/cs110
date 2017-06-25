@@ -75,8 +75,11 @@ class Controller:
 			self.screen.blit(self.background, (0, 0))
 			self.screen.blit(self.backgroundImage.image, self.backgroundImage.rect)
 			self.sprites.draw(self.screen)
-			pygame.draw.rect(self.screen, self.player1.healthColor, [10, 10, 4*self.player1.health, 50])
+			pygame.draw.rect(self.screen, self.player1.healthColor, [10, 10, 4*self.player1.health, 50])   #(Surface, color, Rect, width=0)
 			pygame.draw.rect(self.screen, self.player2.healthColor, [1270-(4*self.player2.health), 10, 4*self.player2.health, 50])
+
+			pygame.draw.rect(self.screen, (255,0,0), [10,60,4*self.player1.energyRate,50])
+			pygame.draw.rect(self.screen, (255,0,0), [1270-4*self.player2.energyRate,60, 4*self.player2.energyRate,50])
 			pygame.display.flip()
 			self.clock.tick(60)
 
