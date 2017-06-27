@@ -23,8 +23,8 @@ class Controller:
                 self.KOsprite = pygame.sprite.Group(self.KO)
 
                 "Load the sprites that we need"""
-                self.player1 = character.Character("Skullcrusher", 50, height-370, "spritestrip.png")
-                self.player2 = character.Character("Demon Slayer", width-400, height-370, "spritestrip.png")
+                self.player1 = character.Character("Skullcrusher", 50, height-370,"right")
+                self.player2 = character.Character("Demon Slayer", width-400, height-370, "left")
                 self.player1Controls = [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d]
                 self.player2Controls = [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT]
                 
@@ -158,22 +158,31 @@ class Controller:
                                         #We can't put block in our fight function, because our fight function only works once the key is up
                                         #We also can't put it in our move function, because you can move and fight
                                         if event.key == pygame.K_h:
-                                                self.player1.block(event.key)
+                                                self.player1.block()
                                         if event.key == pygame.K_KP6:
-                                                self.player2.block(event.key)
+                                                self.player2.block()
                                         if event.key == pygame.K_KP7:    
                                                 self.player2.ultimate(self.screen,self.player1)
                                         if event.key == pygame.K_j:
                                                 self.player1.ultimate(self.screen,self.player2)
         
-                                if event.type == pygame.KEYUP:
-                                        if event.key == pygame.K_f or event.key == pygame.K_g: #we cannot spam(keep pressed down) our punches and kickes
-                                                self.player1.fight("Punch", self.player2)
-                                        if event.key == pygame.K_KP4 or event.key == pygame.K_KP5:
-                                                self.player2.fight("Kick", self.player1)
-                                        self.player1.unblock(event.key)
-                                        print("Invincibility1: ", self.player1.invincibility)
-                                        self.player2.unblock(event.key)
+                                if event.type == pygame.KEYUP: #we cannot spam(keep pressed down) our punches and kickes
+                                        if event.key == pygame.K_f:
+                                                self.player1.fight("kick", self.player2)
+                                        if event.key == pygame.K_g: 
+                                                self.player1.fight("punch", self.player2)
+                                        if event.key == pygame.K_KP4:
+                                                self.player2.fight("kick", self.player1)
+                                        if event.key == pygame.K_KP5:
+                                                self.player2.fight("punch", self.player1)
+                                        if event.key == pygame.K_h:
+                                                self.player1.unblock()
+                                        if event.key == pygame.K_KP6:
+                                                self.player2.unblock()
+                                        if event.key == pygame.K_KP7:
+                                                self.player2.laserEnd()
+                                        if event.key == pygame.K_j:
+                                                self.player1.laserEnd()
 
                         
                         self.gameOver = False   
@@ -187,11 +196,11 @@ class Controller:
                         self.screen.blit(self.background, (0, 0))
                         self.screen.blit(self.backgroundImage.image, self.backgroundImage.rect)
                         self.sprites.draw(self.screen)
-                        pygame.draw.rect(self.screen, self.player1.healthColor, [10, 10, 4*self.player1.health, 50])   #(Surface, color, Rect, width=0)
-                        pygame.draw.rect(self.screen, self.player2.healthColor, [1270-(4*self.player2.health), 10, 4*self.player2.health, 50])
+                        pygame.draw.rect(self.screen, self.player1.healthColor, [10, 10, 2*self.player1.health, 50])   #(Surface, color, Rect, width=0)
+                        pygame.draw.rect(self.screen, self.player2.healthColor, [1270-(2*self.player2.health), 10, 4*self.player2.health, 50])
 
-                        pygame.draw.rect(self.screen, (255,0,0), [10,60,4*self.player1.energyRate,50])  #energy bar
-                        pygame.draw.rect(self.screen, (255,0,0), [1270-4*self.player2.energyRate,60, 4*self.player2.energyRate,50])
+                        pygame.draw.rect(self.screen, (238,130,238), [10,60,4*self.player1.energyRate,50])  #energy bar
+                        pygame.draw.rect(self.screen, (238,130,238), [1270-4*self.player2.energyRate,60, 4*self.player2.energyRate,50])
 
                          ##Cassie's Additions
                         self.player1.update()
@@ -212,11 +221,20 @@ class Controller:
                                         self.gameOver = False   #so can go to ending screen
                         while self.endScreen == True:
                                 print(6)
-                                self.screen.blit(self.background, (0, 0))
-                                self.screen.blit(self.backgroundImage.image, self.backgroundImage.rect)
+                                #self.screen.blit(self.background, (0, 0))
+                                #self.screen.blit(self.backgroundImage.image, self.backgroundImage.rect)
+                                self.screen.fill((0,0,0))
+                                if(self.player1.health <= 0):
+                                        player2Sign = self.defButton("Player2.png",300,150)  #resize the player sign
+                                        self.screen.blit(player2Sign,(500,100))
+                                else:
+                                        player2Sign = self.defButton("Player1.png",300,150)
+                                        self.screen.blit(player2Sign,(500,100))
+                                victorySign = self.defButton("Victory.png",500,250)
+                                self.screen.blit(victorySign,(400,250))
                                 f = pygame.font.Font(None,50)
                                 surf = f.render("Press c to go to main screen or q to quit", 1, (255,0,255)) 
-                                collision = self.screen.blit(surf,(300,300))
+                                collision = self.screen.blit(surf,(350,500))
                                 pygame.display.update()
                                 for event in pygame.event.get():
                                         if event.type == pygame.QUIT:

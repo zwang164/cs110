@@ -58,7 +58,7 @@ class Character(pygame.sprite.Sprite):
 
 	### Starting frame and referencing the rect
 		self.facing = startFacing
-		if self.facing == "Left":
+		if self.facing == "left":
 			self.frames = self.standingFramesL
 		else:
 			self.frames = self.standingFramesR
@@ -69,14 +69,15 @@ class Character(pygame.sprite.Sprite):
 		self.rect.y = y
 	
 	### Finally the stats
-		self.health = 100
+		self.health = 250
 		self.speed = 50
 		self.healthColor = (0,255,0)
 		self.comboList = []
 		self.timer = pygame.time.Clock()
 		self.time = 0
 		self.invincibility = False
-		self.energyRate = 0
+		self.laser = False
+		self.energyRate = 100
 
 	
 	def healthBar(self):
@@ -87,14 +88,14 @@ class Character(pygame.sprite.Sprite):
 	
 	def move1(self, direction):
 		if(direction[pygame.K_a] and self.invincibility == False): #and self.invincibility != True):
-			self.facing = "Left"
+			self.facing = "left"
 			if(self.rect.x > 50):
 				self.rect.x -= self.speed
 				# Cassie's Additions
 				self.frames = self.walkingFramesL
 				
 		if(direction[pygame.K_d] and self.invincibility == False): #and self.invincibility != True):
-			self.facing = "Right"
+			self.facing = "right"
 			if(self.rect.x < 1280-318):
 				self.rect.x += self.speed
 				### Cassie's Additions
@@ -103,35 +104,42 @@ class Character(pygame.sprite.Sprite):
 			
 	def move2(self, direction):
 		if(direction[pygame.K_LEFT] and self.invincibility == False):
-			self.facing = "Left"
+			self.facing = "left"
 			print(self.facing)
 			if(self.rect.x > 50):
 				self.rect.x -= self.speed
 				self.frames = self.walkingFramesL
 		if(direction[pygame.K_RIGHT] and self.invincibility == False):
-			self.facing = "Right"
+			self.facing = "right"
 			print(self.facing)
 			if(self.rect.x < 1280-280):
 				self.rect.x += self.speed
 				self.frames = self.walkingFramesR	
 	
-	def block(self, eventKey):
-		if (eventKey == pygame.K_h or eventKey == pygame.K_KP6):
-			self.invincibility = True
+	def block(self):
+		self.invincibility = True
+		if(self.facing == "left"):
+			self.frames = self.blockFramesL
+		if(self.facing == "right"):
+			self.frames = self.blockFramesR
 
-	def unblock(self, eventKey):
-		if (eventKey == pygame.K_h or eventKey == pygame.K_KP6):
-			self.invincibility = False
-			
+	def unblock(self):
+		self.invincibility = False
+		## End block animation
+		if(self.facing == "left"):
+			self.frames = self.standingFramesL
+		if(self.facing == "right"):
+			self.frames = self.standingFramesR
+
 	def hit(self, opponent, damage, knockback):
 		opponent.health -= damage
 		if(self.energyRate <100):
 			self.energyRate += 10
-		if (self.facing == "Left"):
-			if(opponent.rect.x > 50):
+		if (self.facing == "left"):
+			if(opponent.rect.x > 20):
 				opponent.rect.x -= knockback
-		if (self.facing == "Right"):
-			if(self.rect.x < 1280-280):
+		if (self.facing == "right"):
+			if(opponent.rect.x < 1280-370):
 				opponent.rect.x += knockback
 
 	def fight(self, fight, opponent):
@@ -141,43 +149,61 @@ class Character(pygame.sprite.Sprite):
 			# as if you're some kind of twat who spams attacks
 			if(fight == "punch"):
 				#Sound only takes wav files and ogg files
-				pygame.mixer.Sound("..assets/punch.wav").play()
-				if(self.facing == "Left"):
+				pygame.mixer.Sound("../Cassie/assets/punch.wav").play()
+				if(self.facing == "left"):
 					self.frames = self.punchFramesL
-				if(self.facing == "Right"):
+				if(self.facing == "right"):
 					self.frames = self.punchFramesR
 				if(opponent.health > 0 and pygame.sprite.collide_rect(self, opponent) and (opponent.invincibility == False or self.facing == opponent.facing)):              
 					self.hit(opponent, 10, 30)
 			if(fight == "kick"):
 				#Yeah don't try to play mp4 files
 				pygame.mixer.Sound("../Cassie/assets/kick.wav").play()
-				if(self.facing == "Left"):
+				if(self.facing == "left"):
 					self.frames = self.kickFramesL
-				if(self.facing == "Right"):
+				if(self.facing == "right"):
 					self.frames = self.kickFramesR
 				if(fight == "kick" and opponent.health > 0 and pygame.sprite.collide_rect(self, opponent) and (opponent.invincibility == False or self.facing == opponent.facing)):
 					self.hit(opponent, 15, 60)
 
 	def ultimate(self,screen,opponent):
 		if(self.energyRate == 100):
-			pygame.mixer.Sound("..assets/hadouken.wav").play()
-			if(self.facing == "Left"):
-				image, rect = load_image('10.png')
-				pygame.transform.flip(image, True, False)
-				self.image, self.rect = image, rect
-							
-			else:
-				self.image, self.rect = load_image('10.png')
+			pygame.mixer.Sound("../Cassie/assets/hadouken.wav").play()
+			image = load_image('10.png')
+			self.laser = True
+			self.savePos = self.rect.x
+			if(self.facing == "left"):
+				newPos = self.rect.x - 2223 + 350
+				self.rect.x = newPos
+				self.frames = self.laserL
+			if(self.facing == "right"):
+				self.frames = self.laserR
 			## If you miss this giant laser that's your fault
 			if (pygame.sprite.collide_rect(self, opponent)):
+				print(1)
 				self.hit(opponent, 1000, 500)
 			self.energyRate = 0
-			
+
+	def laserEnd(self):
+		if (self.laser == True):
+			if(self.facing == "left"):
+				#Since pygame interprets image position based on the top left pixel,
+				# we need to move the cat's posiition so when the laser is replaced with a new image
+				# the cat won't be off screen
+				self.frames = self.standingFramesL
+				self.image = self.frames[0]
+				self.rect.x = self.savePos
+			if(self.facing == "right"):
+				self.frames = self.standingFramesR
+			self.laser = False
 
 	def update(self):
 		###Cassie's Additions
 		self.time +=1
-		if self.time >= len(self.frames):
+		if(self.time >= 20):
 			self.time=0
-		self.image = self.frames[self.time]
+		if(self.time <= 10):
+			self.image = self.frames[0]
+		if(self.time > 10 and len(self.frames)>1):
+			self.image = self.frames[1]
 
