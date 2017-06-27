@@ -71,7 +71,9 @@ class Character(pygame.sprite.Sprite):
 	
 		
 	### Starting frame and referencing the rect
-		self.image = self.walkingFramesR[0]
+		### Cassie's Additions
+		self.frames = self.walkingFramesR
+		self.image = self.frames[0]
 		self.rect = self.image.get_rect()
 	### Starting position
 		self.rect.x = x
@@ -84,9 +86,9 @@ class Character(pygame.sprite.Sprite):
 		self.comboList = []
 		#Might remove this l8
 		self.timer = pygame.time.Clock()
+		### Cassie's addition
+		self.time = 0
 		###
-		self.jumpSpeed = 100
-		self.isJumping = False
 		self.invincibility = False
 		self.energyRate = 0
 		self.facing = "None"
@@ -139,7 +141,6 @@ class Character(pygame.sprite.Sprite):
 					self.laser_x += 100
 			
 			self.energyRate = 0
-			pygame.init()
 			pygame.mixer.Sound("../FinalProject/assets/hadouken.wav").play()
 			
 
@@ -150,51 +151,42 @@ class Character(pygame.sprite.Sprite):
 			self.healthColor = (255, 0 ,0 )
 	
 	def move1(self, direction):
-		if(direction[pygame.K_a]):
+		if(direction[pygame.K_a] and self.invincibility == False): #and self.invincibility != True):
 			self.facing = "Left"
 			if(self.rect.x > 50):
 				self.rect.x -= self.speed
-				#Cycles through spritesheet based on position
-				frame = (self.rect.x // 30) % len(self.walkingFramesL)
-				self.image = self.walkingFramesL[frame]
+				# Cassie's Additions
+				self.frames = self.walkingFramesL
 				
-		if(direction[pygame.K_d]):
+		if(direction[pygame.K_d] and self.invincibility == False): #and self.invincibility != True):
 			self.facing = "Right"
 			if(self.rect.x < 1280-318):
 				self.rect.x += self.speed
-				frame = (self.rect.x // 30) % len(self.walkingFramesR)
-				self.image = self.walkingFramesR[frame]
-		#Uh, I commented this out because it doesn't do what i want ;_;
-		#You can move in all directions at once, but you can't move and block
-		#elif(direction[pygame.K_h]):
-		#self.invincibility = 1
-		#        print("MANLY BLOCK!")
+				### Cassie's Additions
+				self.frames = self.walkingFramesR
 			
 			
 	def move2(self, direction):
-		if(direction[pygame.K_LEFT]):
+		if(direction[pygame.K_LEFT] and self.invincibility == False):
 			self.facing = "Left"
 			print(self.facing)
 			if(self.rect.x > 50):
 				self.rect.x -= self.speed
-				frame = (self.rect.x // 30) % len(self.walkingFramesL)
-				self.image = self.walkingFramesL[frame]
-		if(direction[pygame.K_RIGHT]):
+				self.frames = self.walkingFramesL
+		if(direction[pygame.K_RIGHT] and self.invincibility == False):
 			self.facing = "Right"
 			print(self.facing)
 			if(self.rect.x < 1280-280):
 				self.rect.x += self.speed
-				frame = (self.rect.x // 30) % len(self.walkingFramesR)
-				self.image = self.walkingFramesR[frame]		
+				self.frames = self.walkingFramesR	
 	
 	def block(self, eventKey):
 		if (eventKey == pygame.K_h or eventKey == pygame.K_KP6):
-			self.invincibility = 1
+			self.invincibility = True
 
 	def unblock(self, eventKey):
 		if (eventKey == pygame.K_h or eventKey == pygame.K_KP6):
 			self.invincibility = False
-			print("Invincibility1: ", self.invincibility)
 			
 	def hit(self, opponent, damage, knockback):
 		opponent.health -= damage
@@ -207,30 +199,29 @@ class Character(pygame.sprite.Sprite):
 
 	def fight(self, eventKey, opponent):
 		print("Invincibility: ", self.invincibility)
-		if(eventKey == pygame.K_f or eventKey == pygame.K_KP4):
+		if(self.invincibility == False):
 			if(self.energyRate <100):
 				self.energyRate += 10
 			#Run the punch animation even if you're nowhere close to other player
 			# as if you're some kind of twat who spams attacks
-			print("PUNCH OF DEEEAAAATH!")
 			if(opponent.health > 0 and pygame.sprite.collide_rect(self, opponent) and (opponent.invincibility == False or self.facing == opponent.facing)):              
-				self.hit(opponent, 10, 20)
+				self.hit(opponent, 10, 30)
 			# sound effect for punch, Sound only uses wav file not mp3(only Music)
-				pygame.init()
-				pygame.mixer.Sound("../FinalProject/assets/punch.wav").play()
-
-		if(eventKey == pygame.K_g or eventKey == pygame.K_KP5):
+			pygame.mixer.Sound("../FinalProject/assets/punch.wav").play()
+		if(self.invincibility == False):
 			if(self.energyRate <100):
 				self.energyRate += 10
 			#Run the kick animation even without collision
 			# because you could be stupid and miss your kick
-			print("KICK OF DOOOOOOOOOM!")
 			if (opponent.health > 0 and pygame.sprite.collide_rect(self, opponent) and (opponent.invincibility == False or self.facing == opponent.facing)):
 				self.hit(opponent, 10, 20)
-				
-			# sound effect for kick
-				pygame.init()
-				pygame.mixer.Sound("../FinalProject/assets/kick.wav").play()
+                        # sound effect for punch, Sound only uses wav file not mp3(only Music)
+			pygame.mixer.Sound("../FinalProject/assets/kick.wav").play()
+
 	def update(self):
-		print("updating position")
+		###Cassie's Additions
+		self.time +=1
+		if self.time >= len(self.frames):
+			self.time=0
+		self.image = self.frames[self.time]
 
