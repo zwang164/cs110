@@ -77,7 +77,7 @@ class Character(pygame.sprite.Sprite):
 		self.time = 0
 		self.invincibility = False
 		self.laser = False
-		self.energyRate = 100
+		self.energyRate = 0
 
 	
 	def healthBar(self):
@@ -133,7 +133,7 @@ class Character(pygame.sprite.Sprite):
 
 	def hit(self, opponent, damage, knockback):
 		opponent.health -= damage
-		if(self.energyRate <100):
+		if(self.energyRate <100 and self.laser == False):
 			self.energyRate += 10
 		if (self.facing == "left"):
 			if(opponent.rect.x > 20):
@@ -141,6 +141,10 @@ class Character(pygame.sprite.Sprite):
 		if (self.facing == "right"):
 			if(opponent.rect.x < 1280-370):
 				opponent.rect.x += knockback
+		if (opponent.facing == "right"):
+			opponent.frames = opponent.hitFramesR
+		if (opponent.facing == "left"):
+			opponent.frames = opponent.hitFramesL
 
 	def fight(self, fight, opponent):
 		print("Invincibility: ", self.invincibility)
@@ -154,8 +158,8 @@ class Character(pygame.sprite.Sprite):
 					self.frames = self.punchFramesL
 				if(self.facing == "right"):
 					self.frames = self.punchFramesR
-				if(opponent.health > 0 and pygame.sprite.collide_rect(self, opponent) and (opponent.invincibility == False or self.facing == opponent.facing)):              
-					self.hit(opponent, 10, 30)
+				if(opponent.health > 0 and pygame.sprite.collide_rect(self, opponent) and (opponent.invincibility == False or self.facing == opponent.facing) and opponent.laser == False):              
+					self.hit(opponent, 5, 30)
 			if(fight == "kick"):
 				#Yeah don't try to play mp4 files
 				pygame.mixer.Sound("../Cassie/assets/kick.wav").play()
@@ -163,11 +167,13 @@ class Character(pygame.sprite.Sprite):
 					self.frames = self.kickFramesL
 				if(self.facing == "right"):
 					self.frames = self.kickFramesR
-				if(fight == "kick" and opponent.health > 0 and pygame.sprite.collide_rect(self, opponent) and (opponent.invincibility == False or self.facing == opponent.facing)):
-					self.hit(opponent, 15, 60)
+				if(fight == "kick" and opponent.health > 0 and pygame.sprite.collide_rect(self, opponent) and (opponent.invincibility == False or self.facing == opponent.facing) and opponent.laser == False):
+					self.hit(opponent, 10, 60)
 
-	def ultimate(self,screen,opponent):
-		if(self.energyRate == 100):
+	def ultimate1(self, opponent, keyPressed):
+		if(self.energyRate >= 10 and keyPressed[pygame.K_j]):
+			## We need to save the position so that way, when we call the self.rect function
+			## it won't go to the top right of the screen
 			pygame.mixer.Sound("../Cassie/assets/hadouken.wav").play()
 			savePosX = self.rect.x
 			savePosY = self.rect.y
@@ -185,25 +191,37 @@ class Character(pygame.sprite.Sprite):
 			self.rect.x = savePosX
 			self.rect.y = savePosY
 			## If you miss this giant laser that's your fault
-			if (pygame.sprite.collide_rect(self, opponent)):
-				print(1)
+			if (pygame.sprite.collide_rect(self, opponent) and opponent.health > 0):
 				self.hit(opponent, 10, 0)
-			#self.energyRate = 0
+			self.energyRate -= 10
 
-	def laserEnd(self):
-		if (self.laser == True):
+	def ultimate2(self, opponent, keyPressed):
+		if(self.energyRate >= 10 and keyPressed[pygame.K_KP7]):
+			## We need to save the position so that way, when we call the self.rect function
+			## it won't go to the top right of the screen
+			pygame.mixer.Sound("../Cassie/assets/hadouken.wav").play()
+			savePosX = self.rect.x
+			savePosY = self.rect.y
+			self.laser = True
+			self.savePos = self.rect.x
 			if(self.facing == "left"):
-				#Since pygame interprets image position based on the top left pixel,
-				# we need to move the cat's posiition so when the laser is replaced with a new image
-				# the cat won't be off screen
-				self.frames = self.standingFramesL
-				self.image = self.frames[0]
-				self.rect.x = self.savePos
+				savePosX = self.rect.x - 2223 + 350
+				self.rect.x = savePosX
+				self.frames = self.laserL
+				self.image = self.laserL[0]
 			if(self.facing == "right"):
-				self.frames = self.standingFramesR
-			self.laser = False
+				self.frames = self.laserR
+				self.image = self.laserR[0]
+			self.rect = self.image.get_rect()
+			self.rect.x = savePosX
+			self.rect.y = savePosY
+			## If you miss this giant laser that's your fault
+			if (pygame.sprite.collide_rect(self, opponent) and opponent.health > 0):
+                                        self.hit(opponent, 10, 0)
+			self.energyRate -= 10
 
 	def update(self):
+		self.healthBar()
 		if (self.laser == True):
 			if(self.facing == "left"):
 				#Since pygame interprets image position based on the top left pixel,
@@ -214,18 +232,17 @@ class Character(pygame.sprite.Sprite):
 				self.rect.x = self.savePos
 			if(self.facing == "right"):
 				self.frames = self.standingFramesR
-			#self.laser = False
 		else:	
-                        self.time +=1
-                        savePosX = self.rect.x
-                        savePosY = self.rect.y
-                        if(self.time >= 20):
-                                self.time=0
-                        if(self.time <= 10):
-                                self.image = self.frames[0]
-                        if(self.time > 10 and len(self.frames)>1):
-                                self.image = self.frames[1]
-                        self.rect = self.image.get_rect()
-                        self.rect.x = savePosX
-                        self.rect.y = savePosY
+			self.time +=1
+			savePosX = self.rect.x
+			savePosY = self.rect.y
+			if(self.time >= 20):
+				self.time=0
+			if(self.time <= 10):
+				self.image = self.frames[0]
+			if(self.time > 10 and len(self.frames)>1):
+				self.image = self.frames[1]
+			self.rect = self.image.get_rect()
+			self.rect.x = savePosX
+			self.rect.y = savePosY
 

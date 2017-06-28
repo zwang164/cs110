@@ -104,10 +104,11 @@ class Controller:
                                                 quit()
         def instructionMenu(self):
                 self.screen.fill((0,0,0))
-                instruction1 = self.drawFont("Player1  :  a / d --- move left / move right",200,100)
-                instruction2 = self.drawFont("Player1  :  f / g / h / j --- punch / kick / block / ultimate",200,200)
-                instruction3 = self.drawFont("Player2  :  leftarrow / rightarrow --- move left / move right",200,300)
-                instruction4 = self.drawFont("Player2  :  4 / 5 / 6 / 7 --- punch / kick / block / ultimate",200,400)
+                instruction1 = self.drawFont("Player1  :  a / d --- move left / move right",200,50)
+                instruction2 = self.drawFont("Player1  :  f / g / h / j --- punch / kick / block / ultimate",200,100)
+                instruction3 = self.drawFont("Player2  :  leftarrow / rightarrow --- move left / move right",200,150)
+                instruction4 = self.drawFont("Player2  :  KP4 / KP5 / KP6 / KP7 --- punch / kick / block / ultimate",200,200)
+                instruction5 = self.drawFont("Build up SP by fighting and hold down j or KP7 to fire laser!", 200, 250)
                 
                 
                 returnButton = self.defButton("Return.png",150,150)
@@ -152,6 +153,9 @@ class Controller:
                                 if event.type == pygame.KEYDOWN:
                                         self.player1.move1(keys)
                                         self.player2.move2(keys)
+                                        ## Player is invincible while using ultimate
+                                        self.player1.ultimate1(self.player2, keys)
+                                        self.player2.ultimate2(self.player1, keys)
                                         print("Invincibility1: ", self.player1.invincibility)
                                         print("Invincibiliy2: ", self.player2.invincibility)
                                         #Event.type is one input, so you can't block and do other stuff
@@ -161,20 +165,16 @@ class Controller:
                                                 self.player1.block()
                                         if event.key == pygame.K_KP6:
                                                 self.player2.block()
-                                        if event.key == pygame.K_KP7:    
-                                                self.player2.ultimate(self.screen,self.player1)
-                                        if event.key == pygame.K_j:
-                                                self.player1.ultimate(self.screen,self.player2)
 
                                 if event.type == pygame.KEYUP: #we cannot spam(keep pressed down) our punches and kickes
                                         if event.key == pygame.K_f:
-                                                self.player1.fight("kick", self.player2)
-                                        if event.key == pygame.K_g: 
                                                 self.player1.fight("punch", self.player2)
+                                        if event.key == pygame.K_g: 
+                                                self.player1.fight("kick", self.player2)
                                         if event.key == pygame.K_KP4:
-                                                self.player2.fight("kick", self.player1)
-                                        if event.key == pygame.K_KP5:
                                                 self.player2.fight("punch", self.player1)
+                                        if event.key == pygame.K_KP5:
+                                                self.player2.fight("kick", self.player1)
                                         if event.key == pygame.K_h:
                                                 self.player1.unblock()
                                         if event.key == pygame.K_KP6:
@@ -197,7 +197,7 @@ class Controller:
                         self.screen.blit(self.backgroundImage.image, self.backgroundImage.rect)
                         self.sprites.draw(self.screen)
                         pygame.draw.rect(self.screen, self.player1.healthColor, [10, 10, 2*self.player1.health, 50])   #(Surface, color, Rect, width=0)
-                        pygame.draw.rect(self.screen, self.player2.healthColor, [1270-(2*self.player2.health), 10, 4*self.player2.health, 50])
+                        pygame.draw.rect(self.screen, self.player2.healthColor, [1270-(2*self.player2.health), 10, 2*self.player2.health, 50])
 
                         pygame.draw.rect(self.screen, (238,130,238), [10,60,4*self.player1.energyRate,50])  #energy bar
                         pygame.draw.rect(self.screen, (238,130,238), [1270-4*self.player2.energyRate,60, 4*self.player2.energyRate,50])
